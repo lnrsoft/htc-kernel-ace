@@ -16,7 +16,6 @@
 #include <linux/genalloc.h>
 #include <linux/slab.h>
 #include <linux/sched.h>
-#include <linux/iommu.h>
 
 #include "kgsl.h"
 #include "kgsl_mmu.h"
@@ -315,14 +314,7 @@ int kgsl_mmu_init(struct kgsl_device *device)
 
 	mmu->device = device;
 
-	if (KGSL_MMU_TYPE_NONE == kgsl_mmu_type) {
-		dev_info(device->dev, "|%s| MMU type set for device is "
-			"NOMMU\n", __func__);
-		return 0;
-	} else if (KGSL_MMU_TYPE_GPU == kgsl_mmu_type)
-		mmu->mmu_ops = &gpummu_ops;
-	else if (KGSL_MMU_TYPE_IOMMU == kgsl_mmu_type)
-		mmu->mmu_ops = &iommu_ops;
+	mmu->mmu_ops = &gpummu_ops;
 
 	return mmu->mmu_ops->mmu_init(device);
 }
@@ -418,10 +410,7 @@ static struct kgsl_pagetable *kgsl_mmu_createpagetableobject(
 		goto err_pool;
 	}
 
-	if (KGSL_MMU_TYPE_GPU == kgsl_mmu_type)
-		pagetable->pt_ops = &gpummu_pt_ops;
-	else if (KGSL_MMU_TYPE_IOMMU == kgsl_mmu_type)
-		pagetable->pt_ops = &iommu_pt_ops;
+	pagetable->pt_ops = &gpummu_pt_ops;
 
 	pagetable->priv = pagetable->pt_ops->mmu_create_pagetable();
 	if (!pagetable->priv)
@@ -712,12 +701,6 @@ EXPORT_SYMBOL(kgsl_mmu_get_mmutype);
 
 void kgsl_mmu_set_mmutype(char *mmutype)
 {
-	kgsl_mmu_type = iommu_found() ? KGSL_MMU_TYPE_IOMMU : KGSL_MMU_TYPE_GPU;
-	if (mmutype && !strncmp(mmutype, "gpummu", 6))
-		kgsl_mmu_type = KGSL_MMU_TYPE_GPU;
-	if (iommu_found() && mmutype && !strncmp(mmutype, "iommu", 5))
-		kgsl_mmu_type = KGSL_MMU_TYPE_IOMMU;
-	if (mmutype && !strncmp(mmutype, "nommu", 5))
-		kgsl_mmu_type = KGSL_MMU_TYPE_NONE;
+	kgsl_mmu_type = KGSL_MMU_TYPE_GPU;
 }
 EXPORT_SYMBOL(kgsl_mmu_set_mmutype);
