@@ -18,6 +18,7 @@
 #include <linux/sched.h>
 #include <linux/fs.h>
 #include <linux/wait.h>
+#include <linux/hardirq.h>
 #include <linux/uaccess.h>
 #include <linux/anon_inodes.h>
 #include <linux/miscdevice.h>
