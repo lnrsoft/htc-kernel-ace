@@ -453,12 +453,49 @@ int kgsl_pwrctrl_init(struct kgsl_device *device)
 	struct kgsl_device_platform_data *pdata = pdev->dev.platform_data;
 
 	/*acquire clocks */
-	for (i = 0; i < KGSL_MAX_CLKS; i++) {
-		if (pdata->clk_map & clks[i].map) {
-			clk = clk_get(&pdev->dev, clks[i].name);
+	if (!strcmp(pdev->name, "kgsl-2d0")) {
+		if (pdata->clk_map & KGSL_CLK_CORE) {
+			clk = clk_get(NULL, "grp_2d_clk");
 			if (IS_ERR(clk))
 				goto clk_err;
-			pwr->grp_clks[i] = clk;
+			pwr->grp_clks[1] = clk;
+
+		}
+		if (pdata->clk_map & KGSL_CLK_IFACE) {
+			clk = clk_get(NULL, "grp_2d_pclk");
+			if (IS_ERR(clk))
+				goto clk_err;
+			pwr->grp_clks[2] = clk;
+
+		}
+	} else if (!strcmp(pdev->name, "kgsl-3d0")) {
+		if (pdata->clk_map & KGSL_CLK_SRC) {
+			clk = clk_get(NULL, "grp_src_clk");
+			if (IS_ERR(clk))
+				goto clk_err;
+			pwr->grp_clks[0] = clk;
+
+		}
+		if (pdata->clk_map & KGSL_CLK_CORE) {
+			clk = clk_get(NULL, "grp_clk");
+			if (IS_ERR(clk))
+				goto clk_err;
+			pwr->grp_clks[1] = clk;
+
+		}
+		if (pdata->clk_map & KGSL_CLK_IFACE) {
+			clk = clk_get(NULL, "grp_pclk");
+			if (IS_ERR(clk))
+				goto clk_err;
+			pwr->grp_clks[2] = clk;
+
+		}
+		if (pdata->clk_map & KGSL_CLK_MEM) {
+			clk = clk_get(NULL, "imem_clk");
+			if (IS_ERR(clk))
+				goto clk_err;
+			pwr->grp_clks[3] = clk;
+
 		}
 	}
 	/* Make sure we have a source clk for freq setting */
@@ -498,7 +535,7 @@ int kgsl_pwrctrl_init(struct kgsl_device *device)
 
 	pwr->nap_allowed = pdata->nap_allowed;
 	pwr->interval_timeout = pdata->idle_timeout;
-	pwr->ebi1_clk = clk_get(&pdev->dev, "bus_clk");
+	pwr->ebi1_clk = clk_get(NULL, "ebi1_clk");
 	if (IS_ERR(pwr->ebi1_clk))
 		pwr->ebi1_clk = NULL;
 	else
@@ -535,7 +572,7 @@ int kgsl_pwrctrl_init(struct kgsl_device *device)
 clk_err:
 	result = PTR_ERR(clk);
 	KGSL_PWR_ERR(device, "clk_get(%s) failed: %d\n",
-				 clks[i].name, result);
+				 pdev->name, result);
 
 done:
 	return result;
