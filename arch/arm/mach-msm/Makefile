@@ -257,7 +257,7 @@ obj-$(CONFIG_MACH_SPADE)+= board-spade-keypad.o
 obj-$(CONFIG_MACH_SPADE)+= board-spade-microp.o
 obj-$(CONFIG_MACH_SPADE)+= board-spade-audio.o
 obj-$(CONFIG_MACH_SPADE)+= board-spade-mmc.o board-spade-wifi.o htc_awb_cal.o
-obj-$(CONFIG_MACH_SPADE)+= board-spade-rfkill.o htc_bluetooth.o board-spade-panel.o
+obj-$(CONFIG_MACH_SPADE)+= board-spade-rfkill.o board-spade-panel.o
 
 obj-$(CONFIG_MACH_FLYER)+= board-flyer.o
 obj-$(CONFIG_MACH_FLYER)+= board-flyer-keypad.o

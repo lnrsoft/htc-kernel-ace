@@ -1390,14 +1390,6 @@ config SERIAL_MSM_HS
 	help
 	  Select this module to enable MSM high speed UART driver.
 
-config SERIAL_MSM_HS_PURE_ANDROID
-	tristate "PURE ANDROID MSM UART High Speed: Serial Driver"
-	depends on ARM && ARCH_MSM
-	select SERIAL_CORE
-	default n
-	help
-	  Select this module to enable PURE ANDROID MSM high speed UART driver.
-
 config SERIAL_BCM_BT_LPM
 	tristate "Broadcom Bluetooth Low Power Mode"
 	depends on ARM && ARCH_MSM
