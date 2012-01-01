@@ -1151,8 +1151,6 @@ static struct file_operations debug_fops = {
 };
 #endif
 
-#define BITS_PER_PIXEL_DEF 16
-
 static void setup_fb_info(struct msmfb_info *msmfb)
 {
 	struct fb_info *fb_info = msmfb->fb;
@@ -1175,7 +1173,7 @@ static void setup_fb_info(struct msmfb_info *msmfb)
 	fb_info->var.height = msmfb->panel->fb_data->height;
 	fb_info->var.xres_virtual = msmfb->xres;
 	fb_info->var.yres_virtual = msmfb->yres * 2;
-	fb_info->var.bits_per_pixel = BITS_PER_PIXEL_DEF;
+	fb_info->var.bits_per_pixel = 32;
 	fb_info->var.accel_flags = 0;
 
 	fb_info->var.yoffset = 0;
@@ -1198,15 +1196,18 @@ static void setup_fb_info(struct msmfb_info *msmfb)
 					   ((uint32_t)msmfb->yres << 16);
 	}
 
-	fb_info->var.red.offset = 11;
-	fb_info->var.red.length = 5;
+	fb_info->var.red.offset = 0;
+	fb_info->var.red.length = 8;
 	fb_info->var.red.msb_right = 0;
-	fb_info->var.green.offset = 5;
-	fb_info->var.green.length = 6;
+	fb_info->var.green.offset = 8;
+	fb_info->var.green.length = 8;
 	fb_info->var.green.msb_right = 0;
-	fb_info->var.blue.offset = 0;
-	fb_info->var.blue.length = 5;
+	fb_info->var.blue.offset = 16;
+	fb_info->var.blue.length = 8;
 	fb_info->var.blue.msb_right = 0;
+
+	// fixed refresh rate
+	fb_info->var.reserved[4] = 60;
 
 	mdp->set_output_format(mdp, fb_info->var.bits_per_pixel);
 	mdp->set_panel_size(mdp, msmfb->xres, msmfb->yres);
