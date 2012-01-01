@@ -321,6 +321,7 @@ static void synaptics_ts_work_func(struct work_struct *work)
 		if (finger_pressed == 0 ||
 			((ts->grip_suppression | ts->grip_b_suppression) == finger_pressed && finger_release_changed)) {
 #ifdef CONFIG_TOUCHSCREEN_COMPATIBLE_REPORT
+			input_report_key(ts->input_dev, BTN_TOUCH, 0);
 			input_report_abs(ts->input_dev, ABS_MT_TOUCH_MAJOR, 0);
 #else
 			input_report_abs(ts->input_dev, ABS_MT_AMPLITUDE, 0);
@@ -379,6 +380,8 @@ static void synaptics_ts_work_func(struct work_struct *work)
 				} else if (((finger_pressed >> loop_i) & 1) == 1) {
 					finger_pressed &= ~(1 << loop_i);
 #ifdef CONFIG_TOUCHSCREEN_COMPATIBLE_REPORT
+					input_report_key(ts->input_dev, BTN_TOUCH,
+						finger_data[loop_i][2] ? 1 : 0);
 					input_report_abs(ts->input_dev, ABS_MT_TOUCH_MAJOR,
 						finger_data[loop_i][3]);
 					input_report_abs(ts->input_dev, ABS_MT_WIDTH_MAJOR,
@@ -568,9 +571,8 @@ static int synaptics_ts_probe(
 	ts->input_dev->name = "synaptics-rmi-touchscreen";
 	set_bit(EV_SYN, ts->input_dev->evbit);
 	set_bit(EV_KEY, ts->input_dev->evbit);
-	set_bit(BTN_TOUCH, ts->input_dev->keybit);
-	set_bit(BTN_2, ts->input_dev->keybit);
 	set_bit(EV_ABS, ts->input_dev->evbit);
+	set_bit(BTN_TOUCH, ts->input_dev->keybit);
 
 	set_bit(KEY_BACK, ts->input_dev->keybit);
 	set_bit(KEY_HOME, ts->input_dev->keybit);
@@ -701,6 +703,7 @@ static int synaptics_ts_resume(struct i2c_client *client)
 	ts->timestamp = jiffies;
 
 #ifdef CONFIG_TOUCHSCREEN_COMPATIBLE_REPORT
+	input_report_key(ts->input_dev, BTN_TOUCH, 0);
 	input_report_abs(ts->input_dev, ABS_MT_TOUCH_MAJOR, 0);
 	input_sync(ts->input_dev);
 #else
