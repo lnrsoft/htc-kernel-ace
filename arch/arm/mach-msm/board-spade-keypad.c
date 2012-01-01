@@ -116,8 +116,8 @@ int __init spade_init_keypad(void)
 	if (platform_device_register(&spade_reset_keys_device))
 		printk(KERN_WARNING "%s: register reset key fail\n", __func__);
 #endif
-	spade_keypad_data.name = "spade-keypad-v0";
-	printk("direct key:spade-keypad-v0\n");
+	spade_keypad_data.name = "spade-keypad";
+	printk("direct key:spade-keypad\n");
 
 	return platform_device_register(&spade_keypad_input_device);
 }

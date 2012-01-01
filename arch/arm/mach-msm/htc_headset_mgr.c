@@ -1036,7 +1036,7 @@ static int htc_headset_mgr_probe(struct platform_device *pdev)
 		goto err_request_input_dev;
 	}
 
-	hi->input->name = "h2w headset";
+	hi->input->name = "h2w-headset";
 	set_bit(EV_SYN, hi->input->evbit);
 	set_bit(EV_KEY, hi->input->evbit);
 	set_bit(KEY_END, hi->input->keybit);
